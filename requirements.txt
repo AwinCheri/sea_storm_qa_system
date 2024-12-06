@@ -1,0 +1,13 @@
+tqdm
+pandas
+py2neo
+langchain==0.1.14
+langchainhub
+langchain_openai
+#gradio==4.9.0
+gradio==3.48.0
+faiss-cpu
+python-dotenv
+chromadb
+bs4
+shutup
