@@ -14,21 +14,22 @@ from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 from langchain import hub
 
 
+def generic_func(x, query):
+    prompt = PromptTemplate.from_template(GENERIC_PROMPT_TPL)
+    llm_chain = LLMChain(
+        llm = get_llm_model(),
+        prompt = prompt,
+        verbose = os.getenv('VERBOSE')
+    )
+    return llm_chain.invoke(query)['text']
+
+
 class Agent():
     def __init__(self):
         self.vdb = Chroma(
             persist_directory = os.path.join(os.path.dirname(__file__), './data/db'), 
             embedding_function = get_embeddings_model()
         )
-
-    def generic_func(self, x, query):
-        prompt = PromptTemplate.from_template(GENERIC_PROMPT_TPL)
-        llm_chain = LLMChain(
-            llm = get_llm_model(), 
-            prompt = prompt,
-            verbose = os.getenv('VERBOSE')
-        )
-        return llm_chain.invoke(query)['text']
 
     def retrival_func(self, x, query):
         # 召回并过滤文档
@@ -176,7 +177,7 @@ class Agent():
         tools = [
             Tool.from_function(
                 name = 'generic_func',
-                func = lambda x: self.generic_func(x, query),
+                func = lambda x: generic_func(x, query),
                 description = '可以解答通用领域的知识，例如打招呼，问你是谁等问题',
             ),
             Tool.from_function(
